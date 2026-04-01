@@ -102,34 +102,102 @@ variable "eks_cluster_version" {
   default     = "1.31"
 }
 
-variable "node_instance_types" {
-  description = "EC2 instance types for EKS nodes"
+variable "eks_node_instance_types" {
+  description = "EC2 instance types for EKS nodes (default for both regions)"
   type        = list(string)
   default     = ["m5.xlarge"]
 }
 
-variable "node_desired_size" {
-  description = "Desired number of nodes"
+variable "eks_node_desired_count" {
+  description = "Desired number of EKS nodes (default for both regions). Must equal redis_nodes — one RE pod is scheduled per EKS node."
   type        = number
   default     = 3
 }
 
-variable "node_min_size" {
-  description = "Minimum number of nodes"
+variable "eks_node_min_count" {
+  description = "Minimum number of EKS nodes (default for both regions). Must be ≥ redis_nodes; autoscaling below this evicts RE pods and degrades the cluster."
   type        = number
   default     = 3
 }
 
-variable "node_max_size" {
-  description = "Maximum number of nodes"
+variable "eks_node_max_count" {
+  description = "Maximum number of EKS nodes (default for both regions). RE won't use extra nodes unless redis_nodes is also increased."
   type        = number
   default     = 6
 }
 
-variable "node_disk_size" {
-  description = "Disk size for nodes (GB)"
+variable "eks_node_disk_size" {
+  description = "Disk size in GB per EKS node (default for both regions)"
   type        = number
   default     = 100
+}
+
+#==============================================================================
+# REGION 1 EKS OVERRIDES (optional - uses shared defaults if not specified)
+#==============================================================================
+
+variable "region1_eks_node_instance_types" {
+  description = "EC2 instance types for Region 1 EKS nodes (overrides eks_node_instance_types)"
+  type        = list(string)
+  default     = null
+}
+
+variable "region1_eks_node_desired_count" {
+  description = "Desired EKS node count for Region 1 (overrides eks_node_desired_count)"
+  type        = number
+  default     = null
+}
+
+variable "region1_eks_node_min_count" {
+  description = "Minimum EKS node count for Region 1 (overrides eks_node_min_count)"
+  type        = number
+  default     = null
+}
+
+variable "region1_eks_node_max_count" {
+  description = "Maximum EKS node count for Region 1 (overrides eks_node_max_count)"
+  type        = number
+  default     = null
+}
+
+variable "region1_eks_node_disk_size" {
+  description = "Disk size in GB per EKS node for Region 1 (overrides eks_node_disk_size)"
+  type        = number
+  default     = null
+}
+
+#==============================================================================
+# REGION 2 EKS OVERRIDES (optional - uses shared defaults if not specified)
+#==============================================================================
+
+variable "region2_eks_node_instance_types" {
+  description = "EC2 instance types for Region 2 EKS nodes (overrides eks_node_instance_types)"
+  type        = list(string)
+  default     = null
+}
+
+variable "region2_eks_node_desired_count" {
+  description = "Desired EKS node count for Region 2 (overrides eks_node_desired_count)"
+  type        = number
+  default     = null
+}
+
+variable "region2_eks_node_min_count" {
+  description = "Minimum EKS node count for Region 2 (overrides eks_node_min_count)"
+  type        = number
+  default     = null
+}
+
+variable "region2_eks_node_max_count" {
+  description = "Maximum EKS node count for Region 2 (overrides eks_node_max_count)"
+  type        = number
+  default     = null
+}
+
+variable "region2_eks_node_disk_size" {
+  description = "Disk size in GB per EKS node for Region 2 (overrides eks_node_disk_size)"
+  type        = number
+  default     = null
 }
 
 #==============================================================================
@@ -366,6 +434,74 @@ variable "dns_ttl" {
 
 variable "validate_dns_propagation" {
   description = "Whether to validate DNS propagation after creating records (adds ~30 second delay)"
+  type        = bool
+  default     = false
+}
+
+#==============================================================================
+# ACTIVE-ACTIVE (CRDB) CONFIGURATION
+#==============================================================================
+
+variable "enable_active_active" {
+  description = "Enable Active-Active (CRDB) support by automatically creating RERCs in both regions"
+  type        = bool
+  default     = true
+}
+
+variable "crdb_memory" {
+  description = "Total memory size for the Active-Active database (e.g., 150GB). Must fit within redis_node_memory × redis_nodes, accounting for replication overhead."
+  type        = string
+  default     = "150GB"
+}
+
+variable "crdb_shards" {
+  description = "Number of primary shards for the Active-Active database. Total shard processes = crdb_shards × 2 (with replication). Distribute evenly across redis_nodes."
+  type        = number
+  default     = 6
+}
+
+#==============================================================================
+# BACKUP CONFIGURATION
+#==============================================================================
+
+variable "create_backup_buckets" {
+  description = "Create S3 buckets for Redis backups in both regions"
+  type        = bool
+  default     = true
+}
+
+variable "backup_s3_bucket_name_region1" {
+  description = "S3 bucket name for Region 1 Redis backups. Leave empty to use <project_prefix>-redis-backups-<region1>."
+  type        = string
+  default     = ""
+}
+
+variable "backup_s3_bucket_name_region2" {
+  description = "S3 bucket name for Region 2 Redis backups. Leave empty to use <project_prefix>-redis-backups-<region2>."
+  type        = string
+  default     = ""
+}
+
+variable "backup_s3_prefix" {
+  description = "Path prefix inside the backup bucket (for example: backup)"
+  type        = string
+  default     = "backup"
+}
+
+variable "backup_interval" {
+  description = "Backup interval in duration format used by the post-deployment script (for example: 24h)"
+  type        = string
+  default     = "24h"
+}
+
+variable "backup_retention_days" {
+  description = "Number of days to retain S3 backup objects"
+  type        = number
+  default     = 7
+}
+
+variable "backup_force_destroy" {
+  description = "Allow Terraform to destroy the backup bucket even when it contains objects"
   type        = bool
   default     = false
 }
