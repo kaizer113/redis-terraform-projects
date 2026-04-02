@@ -20,11 +20,13 @@ region2_availability_zones = []
 #------------------------------------------------------------------------------
 # BASIC CONFIGURATION
 #------------------------------------------------------------------------------
-user_prefix = "ba"
-cluster_name = "redis-enterprise"
-project = "redis-dual-region"
-environment = "dev"
-owner = "brandon"
+aws_profile    = "default"
+project_prefix = "ba"
+user_prefix    = "ba"
+cluster_name   = "redis-enterprise"
+project        = "redis-dual-region"
+environment    = "dev"
+owner          = "brandon"
 
 #------------------------------------------------------------------------------
 # NETWORK CONFIGURATION
