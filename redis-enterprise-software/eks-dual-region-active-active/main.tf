@@ -136,15 +136,6 @@ module "region1" {
   bastion_instance_type   = var.bastion_instance_type
   ec2_key_name            = var.bastion_key_name
   bastion_ssh_cidr_blocks = var.bastion_allowed_cidr_blocks
-
-  # Active-Active (RERC) Configuration
-  # Note: FQDNs use hyphens (api-region1) to match Route53 records and the REC ingress spec
-  enable_active_active  = var.enable_active_active
-  local_api_fqdn        = "api-region1.${var.ingress_domain}"
-  local_db_fqdn_suffix  = "-region1.${var.ingress_domain}"
-  remote_cluster_name   = "rec-${local.region2}"
-  remote_api_fqdn       = "api-region2.${var.ingress_domain}"
-  remote_db_fqdn_suffix = "-region2.${var.ingress_domain}"
 }
 
 #==============================================================================
@@ -226,15 +217,6 @@ module "region2" {
   bastion_instance_type   = var.bastion_instance_type
   ec2_key_name            = var.bastion_key_name
   bastion_ssh_cidr_blocks = var.bastion_allowed_cidr_blocks
-
-  # Active-Active (RERC) Configuration
-  # Note: FQDNs use hyphens (api-region2) to match Route53 records and the REC ingress spec
-  enable_active_active  = var.enable_active_active
-  local_api_fqdn        = "api-region2.${var.ingress_domain}"
-  local_db_fqdn_suffix  = "-region2.${var.ingress_domain}"
-  remote_cluster_name   = "rec-${local.region1}"
-  remote_api_fqdn       = "api-region1.${var.ingress_domain}"
-  remote_db_fqdn_suffix = "-region1.${var.ingress_domain}"
 }
 
 #==============================================================================
