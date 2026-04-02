@@ -55,6 +55,19 @@ terraform {
 locals {
   region1 = var.region1
   region2 = var.region2
+
+  # S3 backup bucket names — use explicit override or derive from project_prefix + region
+  backup_bucket_region1 = var.backup_s3_bucket_name_region1 != "" ? var.backup_s3_bucket_name_region1 : "${var.project_prefix}-redis-backups-${local.region1}"
+  backup_bucket_region2 = var.backup_s3_bucket_name_region2 != "" ? var.backup_s3_bucket_name_region2 : "${var.project_prefix}-redis-backups-${local.region2}"
+  backup_prefix         = var.backup_s3_prefix
+
+  # Common tags applied to all taggable resources
+  common_tags = merge(var.tags, {
+    Project     = var.project
+    Environment = var.environment
+    Owner       = var.owner
+    ManagedBy   = "terraform"
+  })
 }
 
 #==============================================================================

@@ -562,3 +562,160 @@ variable "bastion_allowed_cidr_blocks" {
   default     = ["0.0.0.0/0"]
 }
 
+#==============================================================================
+# PROMETHEUS MONITORING
+#==============================================================================
+
+variable "prometheus_enabled" {
+  description = "Enable Prometheus monitoring stack (generates YAML files in post-deployment/02-prometheus-monitoring/generated/)"
+  type        = bool
+  default     = false
+}
+
+variable "prometheus_operator_version" {
+  description = "Version of the kube-prometheus-stack Helm chart to deploy"
+  type        = string
+  default     = "v0.72.0"
+}
+
+variable "prometheus_replicas" {
+  description = "Number of Prometheus replicas"
+  type        = number
+  default     = 1
+}
+
+variable "prometheus_memory_request" {
+  description = "Memory request for Prometheus pods"
+  type        = string
+  default     = "512Mi"
+}
+
+variable "prometheus_cpu_request" {
+  description = "CPU request for Prometheus pods"
+  type        = string
+  default     = "250m"
+}
+
+variable "prometheus_memory_limit" {
+  description = "Memory limit for Prometheus pods"
+  type        = string
+  default     = "1Gi"
+}
+
+variable "prometheus_cpu_limit" {
+  description = "CPU limit for Prometheus pods"
+  type        = string
+  default     = "500m"
+}
+
+variable "prometheus_storage_size" {
+  description = "PVC storage size for Prometheus TSDB"
+  type        = string
+  default     = "10Gi"
+}
+
+variable "prometheus_retention" {
+  description = "How long Prometheus retains metrics data"
+  type        = string
+  default     = "15d"
+}
+
+variable "prometheus_scrape_interval" {
+  description = "How frequently Prometheus scrapes targets"
+  type        = string
+  default     = "30s"
+}
+
+variable "prometheus_scrape_timeout" {
+  description = "Scrape request timeout"
+  type        = string
+  default     = "10s"
+}
+
+variable "prometheus_evaluation_interval" {
+  description = "How frequently Prometheus evaluates rules"
+  type        = string
+  default     = "30s"
+}
+
+#==============================================================================
+# GRAFANA
+#==============================================================================
+
+variable "grafana_enabled" {
+  description = "Enable Grafana as part of the monitoring stack"
+  type        = bool
+  default     = false
+}
+
+variable "grafana_admin_password" {
+  description = "Grafana admin password (sensitive)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "grafana_replicas" {
+  description = "Number of Grafana replicas"
+  type        = number
+  default     = 1
+}
+
+variable "grafana_memory_request" {
+  description = "Memory request for Grafana pods"
+  type        = string
+  default     = "256Mi"
+}
+
+variable "grafana_cpu_request" {
+  description = "CPU request for Grafana pods"
+  type        = string
+  default     = "250m"
+}
+
+variable "grafana_memory_limit" {
+  description = "Memory limit for Grafana pods"
+  type        = string
+  default     = "512Mi"
+}
+
+variable "grafana_cpu_limit" {
+  description = "CPU limit for Grafana pods"
+  type        = string
+  default     = "500m"
+}
+
+#==============================================================================
+# REDIS METRICS / ALERTS
+#==============================================================================
+
+variable "redis_metrics_scheme" {
+  description = "Scheme used to scrape Redis Enterprise metrics endpoint (https or http)"
+  type        = string
+  default     = "https"
+}
+
+variable "redis_metrics_path" {
+  description = "Path for the Redis Enterprise metrics scrape endpoint"
+  type        = string
+  default     = "/metrics"
+}
+
+variable "alert_redis_memory_threshold" {
+  description = "Memory usage percentage threshold that triggers a Redis alert"
+  type        = number
+  default     = 80
+}
+
+variable "alert_redis_cpu_threshold" {
+  description = "CPU usage percentage threshold that triggers a Redis alert"
+  type        = number
+  default     = 80
+}
+
+variable "alert_redis_connection_threshold" {
+  description = "Connection count threshold that triggers a Redis alert"
+  type        = number
+  default     = 1000
+}
+
