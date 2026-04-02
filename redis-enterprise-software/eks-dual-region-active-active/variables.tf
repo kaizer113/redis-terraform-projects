@@ -2,6 +2,12 @@
 # DUAL-REGION VARIABLES
 #==============================================================================
 
+variable "aws_profile" {
+  description = "AWS CLI profile to use for authentication"
+  type        = string
+  default     = "default"
+}
+
 variable "region1" {
   description = "First AWS region"
   type        = string
@@ -41,6 +47,12 @@ variable "region2_availability_zones" {
 #==============================================================================
 # BASIC CONFIGURATION (shared across both regions)
 #==============================================================================
+
+variable "project_prefix" {
+  description = "Short prefix for resource names (e.g. S3 buckets: <project_prefix>-redis-backups-<region>)"
+  type        = string
+  default     = ""
+}
 
 variable "user_prefix" {
   description = "Prefix for resource names"
@@ -208,6 +220,12 @@ variable "redis_operator_version" {
   description = "Redis Enterprise operator version"
   type        = string
   default     = "7.4.6-2.1"
+}
+
+variable "redis_enterprise_version_tag" {
+  description = "Redis Enterprise container image tag. Must match the operator release (see github.com/RedisLabs/redis-enterprise-k8s-docs/releases)."
+  type        = string
+  default     = "8.0.16-33"
 }
 
 variable "redis_nodes" {
